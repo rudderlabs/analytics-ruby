@@ -1,9 +1,9 @@
-require 'segment/analytics/defaults'
+require 'Rudder/analytics/defaults'
 
-module Segment
+module Rudder
   class Analytics
     class BackoffPolicy
-      include Segment::Analytics::Defaults::BackoffPolicy
+      include Rudder::Analytics::Defaults::BackoffPolicy
 
       # @param [Hash] opts
       # @option opts [Numeric] :min_timeout_ms The minimum backoff timeout

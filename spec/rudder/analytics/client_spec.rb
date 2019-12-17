@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Segment
+module Rudder
   class Analytics
     describe Client do
       let(:client) do

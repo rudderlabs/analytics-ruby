@@ -1,25 +1,25 @@
-require 'segment/analytics/version'
-require 'segment/analytics/defaults'
-require 'segment/analytics/utils'
-require 'segment/analytics/field_parser'
-require 'segment/analytics/client'
-require 'segment/analytics/worker'
-require 'segment/analytics/request'
-require 'segment/analytics/response'
-require 'segment/analytics/logging'
+require 'Rudder/analytics/version'
+require 'Rudder/analytics/defaults'
+require 'Rudder/analytics/utils'
+require 'Rudder/analytics/field_parser'
+require 'Rudder/analytics/client'
+require 'Rudder/analytics/worker'
+require 'Rudder/analytics/request'
+require 'Rudder/analytics/response'
+require 'Rudder/analytics/logging'
 
-module Segment
+module Rudder
   class Analytics
-    # Initializes a new instance of {Segment::Analytics::Client}, to which all
+    # Initializes a new instance of {Rudder::Analytics::Client}, to which all
     # method calls are proxied.
     #
     # @param options includes options that are passed down to
-    #   {Segment::Analytics::Client#initialize}
+    #   {Rudder::Analytics::Client#initialize}
     # @option options [Boolean] :stub (false) If true, requests don't hit the
     #   server and are stubbed to be successful.
     def initialize(options = {})
       Request.stub = options[:stub] if options.has_key?(:stub)
-      @client = Segment::Analytics::Client.new options
+      @client = Rudder::Analytics::Client.new options
     end
 
     def method_missing(message, *args, &block)

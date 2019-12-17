@@ -1,18 +1,20 @@
-require 'segment/analytics/defaults'
-require 'segment/analytics/utils'
-require 'segment/analytics/response'
-require 'segment/analytics/logging'
-require 'segment/analytics/backoff_policy'
+require 'Rudder/analytics/defaults'
+require 'Rudder/analytics/utils'
+require 'Rudder/analytics/response'
+require 'Rudder/analytics/logging'
+require 'Rudder/analytics/backoff_policy'
 require 'net/http'
 require 'net/https'
 require 'json'
+require 'pry'
 
-module Segment
+
+module Rudder
   class Analytics
     class Request
-      include Segment::Analytics::Defaults::Request
-      include Segment::Analytics::Utils
-      include Segment::Analytics::Logging
+      include Rudder::Analytics::Defaults::Request
+      include Rudder::Analytics::Utils
+      include Rudder::Analytics::Logging
 
       # public: Creates a new request object to send analytics batch
       #
@@ -24,9 +26,17 @@ module Segment
         @path = options[:path] || PATH
         @retries = options[:retries] || RETRIES
         @backoff_policy =
-          options[:backoff_policy] || Segment::Analytics::BackoffPolicy.new
+          options[:backoff_policy] || Rudder::Analytics::BackoffPolicy.new
 
-        http = Net::HTTP.new(options[:host], options[:port])
+        uri = URI(options[:data_plane_url])
+        printf("************\n")
+        printf("************\n")
+        printf(uri.host)
+        printf("\n************\n")
+        printf(uri.port)
+        printf("************\n")
+
+        http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = options[:ssl]
         http.read_timeout = 8
         http.open_timeout = 4
@@ -107,6 +117,10 @@ module Segment
         payload = JSON.generate(
           :sentAt => datetime_in_iso8601(Time.now),
           :batch => batch
+        )
+
+        payload = JSON.generate(
+          :sentAt => datetime_in_iso8601(Time.now),
         )
         request = Net::HTTP::Post.new(@path, @headers)
         request.basic_auth(write_key, nil)

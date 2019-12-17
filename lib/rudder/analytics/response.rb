@@ -1,4 +1,4 @@
-module Segment
+module Rudder
   class Analytics
     class Response
       attr_reader :status, :error

@@ -1,15 +1,15 @@
 require 'forwardable'
-require 'segment/analytics/logging'
+require 'Rudder/analytics/logging'
 
-module Segment
+module Rudder
   class Analytics
     # A batch of `Message`s to be sent to the API
     class MessageBatch
       class JSONGenerationError < StandardError; end
 
       extend Forwardable
-      include Segment::Analytics::Logging
-      include Segment::Analytics::Defaults::MessageBatch
+      include Rudder::Analytics::Logging
+      include Rudder::Analytics::Defaults::MessageBatch
 
       def initialize(max_message_count)
         @messages = []

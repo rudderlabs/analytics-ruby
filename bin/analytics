@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'segment/analytics'
+require 'Rudder/analytics'
 require 'rubygems'
 require 'commander/import'
 require 'time'
@@ -23,7 +23,8 @@ default_command :send
 command :send do |c|
   c.description = 'send a segment message'
 
-  c.option '--writeKey=<writeKey>', String, 'the Segment writeKey'
+  c.option '--writeKey=<writeKey>', String, 'the Rudder writeKey'
+  c.option '--dataPlaneUrl=<dataPlaneUrl>', String, 'the Rudder data plane URL'
   c.option '--type=<type>', String, 'The Segment message type'
 
   c.option '--userId=<userId>', String, 'the user id to send the event as'
@@ -42,8 +43,9 @@ command :send do |c|
   c.option '--previousId=<previousId>', String, 'the previous id'
 
   c.action do |args, options|
-    Analytics = Segment::Analytics.new({
+    Analytics = Rudder::Analytics.new({
       write_key: options.writeKey,
+      data_plane_url: options.dataPlaneUrl,
       on_error: Proc.new { |status, msg| print msg }
     })
 

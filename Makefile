@@ -15,8 +15,8 @@ check: install  # Installation required for testing binary
 
 # Compile the code and produce any binaries where applicable.
 build:
-	rm -f analytics-ruby-*.gem
-	gem build ./analytics-ruby.gemspec
+	rm -f rudderanalytics-ruby-*.gem
+	gem build ./rudderanalytics-ruby.gemspec
 
 install: build
-	gem install analytics-ruby-*.gem
+	gem install rudderanalytics-ruby-*.gem

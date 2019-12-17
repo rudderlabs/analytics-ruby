@@ -1,1 +1,1 @@
-require 'segment/analytics'
+require 'Rudder/analytics'

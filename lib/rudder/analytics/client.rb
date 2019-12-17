@@ -1,19 +1,22 @@
 require 'thread'
 require 'time'
 
-require 'segment/analytics/defaults'
-require 'segment/analytics/logging'
-require 'segment/analytics/utils'
-require 'segment/analytics/worker'
+require 'Rudder/analytics/defaults'
+require 'Rudder/analytics/logging'
+require 'Rudder/analytics/utils'
+require 'Rudder/analytics/worker'
+require 'Rudder/analytics/defaults'
+require 'net/http'
 
-module Segment
+module Rudder
   class Analytics
     class Client
-      include Segment::Analytics::Utils
-      include Segment::Analytics::Logging
+      include Rudder::Analytics::Utils
+      include Rudder::Analytics::Logging
 
       # @param [Hash] opts
       # @option opts [String] :write_key Your project's write_key
+      # @option opts [String] :data_plane_url Your data plane URL
       # @option opts [FixNum] :max_queue_size Maximum number of calls to be
       #   remain queued.
       # @option opts [Proc] :on_error Handles error calls from the API.
@@ -22,10 +25,16 @@ module Segment
 
         @queue = Queue.new
         @write_key = opts[:write_key]
+        @data_plane_url = opts[:data_plane_url]
         @max_queue_size = opts[:max_queue_size] || Defaults::Queue::MAX_SIZE
         @worker_mutex = Mutex.new
-        @worker = Worker.new(@queue, @write_key, opts)
+        @worker = Worker.new(@queue, @data_plane_url, @write_key, opts)
         @worker_thread = nil
+
+        uri = URI(options[:data_plane_url])
+
+        @host = uri.host
+        @port = uri.port
 
         check_write_key!
 
@@ -80,6 +89,7 @@ module Segment
       # @option attrs [Hash] :traits User traits (optional)
       # @macro common_attrs
       def identify(attrs)
+        printf("\nInside Identifyu \n")
         symbolize_keys! attrs
         enqueue(FieldParser.parse_for_identify(attrs))
       end

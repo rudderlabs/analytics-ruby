@@ -1,6 +1,6 @@
 require 'logger'
 
-module Segment
+module Rudder
   class Analytics
     # Wraps an existing logger and adds a prefix to all messages
     class PrefixedLogger
@@ -10,19 +10,19 @@ module Segment
       end
 
       def debug(msg)
-        @logger.debug("#{@prefix} #{msg}")
+        # @logger.debug("#{@prefix} #{msg}")
       end
 
       def info(msg)
-        @logger.info("#{@prefix} #{msg}")
+        # @logger.info("#{@prefix} #{msg}")
       end
 
       def warn(msg)
-        @logger.warn("#{@prefix} #{msg}")
+        # @logger.warn("#{@prefix} #{msg}")
       end
 
       def error(msg)
-        @logger.error("#{@prefix} #{msg}")
+        # @logger.error("#{@prefix} #{msg}")
       end
     end
 
@@ -35,10 +35,10 @@ module Segment
                           Rails.logger
                         else
                           logger = Logger.new STDOUT
-                          logger.progname = 'Segment::Analytics'
+                          logger.progname = 'Rudder::Analytics'
                           logger
                         end
-          @logger = PrefixedLogger.new(base_logger, '[analytics-ruby]')
+          @logger = PrefixedLogger.new(base_logger, '[rudderanalytics-ruby]')
         end
 
         attr_writer :logger
