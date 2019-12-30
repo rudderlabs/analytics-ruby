@@ -1,7 +1,7 @@
-require 'Rudder/analytics/defaults'
-require 'Rudder/analytics/message_batch'
-require 'Rudder/analytics/request'
-require 'Rudder/analytics/utils'
+require 'rudder/analytics/defaults'
+require 'rudder/analytics/message_batch'
+require 'rudder/analytics/request'
+require 'rudder/analytics/utils'
 
 module Rudder
   class Analytics

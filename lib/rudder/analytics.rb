@@ -1,12 +1,12 @@
-require 'Rudder/analytics/version'
-require 'Rudder/analytics/defaults'
-require 'Rudder/analytics/utils'
-require 'Rudder/analytics/field_parser'
-require 'Rudder/analytics/client'
-require 'Rudder/analytics/worker'
-require 'Rudder/analytics/request'
-require 'Rudder/analytics/response'
-require 'Rudder/analytics/logging'
+require 'rudder/analytics/version'
+require 'rudder/analytics/defaults'
+require 'rudder/analytics/utils'
+require 'rudder/analytics/field_parser'
+require 'rudder/analytics/client'
+require 'rudder/analytics/worker'
+require 'rudder/analytics/request'
+require 'rudder/analytics/response'
+require 'rudder/analytics/logging'
 
 module Rudder
   class Analytics

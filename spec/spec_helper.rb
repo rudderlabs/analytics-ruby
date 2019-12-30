@@ -4,15 +4,20 @@ SimpleCov.start
 require 'codecov'
 SimpleCov.formatter = SimpleCov::Formatter::Codecov
 
-require 'Rudder/analytics'
+require 'rudder/analytics'
 require 'active_support/time'
 
 # Setting timezone for ActiveSupport::TimeWithZone to UTC
 Time.zone = 'UTC'
 
+RSpec.configure do |c|
+  c.fail_fast = true
+end
+
 module Rudder
   class Analytics
     WRITE_KEY = 'testsecret'
+    URI = "http://localhost:8080/v1"
 
     TRACK = {
       :event => 'Ruby Library test event',

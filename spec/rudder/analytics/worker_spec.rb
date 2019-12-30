@@ -10,9 +10,9 @@ module Rudder
       describe '#init' do
         it 'accepts string keys' do
           queue = Queue.new
-          worker = Rudder::Analytics::Worker.new(queue,
+          worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1",
                                                   'secret',
-                                                  'batch_size' => 100)
+                                                  'batch_size' => 100
           batch = worker.instance_variable_get(:@batch)
           expect(batch.instance_variable_get(:@max_message_count)).to eq(100)
         end
@@ -36,7 +36,7 @@ module Rudder
 
             queue = Queue.new
             queue << {}
-            worker = Rudder::Analytics::Worker.new(queue, 'secret')
+            worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1", 'secret'
             worker.run
 
             expect(queue).to be_empty
@@ -59,7 +59,7 @@ module Rudder
 
           queue = Queue.new
           queue << {}
-          worker = described_class.new(queue, 'secret', :on_error => on_error)
+          worker = described_class.new queue, 'secret', :on_error => on_error
 
           # This is to ensure that Client#flush doesn't finish before calling
           # the error handler.
@@ -83,9 +83,9 @@ module Rudder
 
           queue = Queue.new
           queue << Requested::TRACK
-          worker = described_class.new(queue,
+          worker = described_class.new queue,
                                        'testsecret',
-                                       :on_error => on_error)
+                                       :on_error => on_error
           worker.run
 
           expect(queue).to be_empty
@@ -107,9 +107,9 @@ module Rudder
           queue << good_message
           queue << bad_message
 
-          worker = described_class.new(queue,
+          worker = described_class.new queue,
                                        'testsecret',
-                                       :on_error => on_error)
+                                       :on_error => on_error
           worker.run
           expect(queue).to be_empty
         end
@@ -118,7 +118,7 @@ module Rudder
       describe '#is_requesting?' do
         it 'does not return true if there isn\'t a current batch' do
           queue = Queue.new
-          worker = Rudder::Analytics::Worker.new(queue, 'testsecret')
+          worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1", 'testsecret'
 
           expect(worker.is_requesting?).to eq(false)
         end
@@ -133,7 +133,7 @@ module Rudder
 
           queue = Queue.new
           queue << Requested::TRACK
-          worker = Rudder::Analytics::Worker.new(queue, 'testsecret')
+          worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1", 'testsecret'
 
           worker_thread = Thread.new { worker.run }
           eventually { expect(worker.is_requesting?).to eq(true) }

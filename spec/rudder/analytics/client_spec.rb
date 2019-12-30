@@ -4,7 +4,7 @@ module Rudder
   class Analytics
     describe Client do
       let(:client) do
-        Client.new(:write_key => WRITE_KEY).tap { |client|
+        Client.new(:write_key => WRITE_KEY, :data_plane_url => URI).tap { |client|
           # Ensure that worker doesn't consume items from the queue
           client.instance_variable_set(:@worker, NoopWorker.new)
         }
@@ -18,13 +18,13 @@ module Rudder
 
         it 'does not error if a write_key is supplied' do
           expect do
-            Client.new :write_key => WRITE_KEY
+            Client.new :write_key => WRITE_KEY, :data_plane_url => URI
           end.to_not raise_error
         end
 
         it 'does not error if a write_key is supplied as a string' do
           expect do
-            Client.new 'write_key' => WRITE_KEY
+            Client.new 'write_key' => WRITE_KEY, :data_plane_url => URI
           end.to_not raise_error
         end
       end
@@ -251,7 +251,7 @@ module Rudder
 
       describe '#flush' do
         let(:client_with_worker) {
-          Client.new(:write_key => WRITE_KEY).tap { |client|
+          Client.new(:write_key => WRITE_KEY, :data_plane_url => URI).tap { |client|
             queue = client.instance_variable_get(:@queue)
             client.instance_variable_set(:@worker, DummyWorker.new(queue))
           }

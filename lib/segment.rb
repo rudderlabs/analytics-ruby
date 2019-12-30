@@ -1,1 +1,1 @@
-require 'Rudder/analytics'
+require 'rudder/analytics'

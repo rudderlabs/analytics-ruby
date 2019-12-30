@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'Rudder/analytics'
+require 'rudder/analytics'
 require 'rubygems'
 require 'commander/import'
 require 'time'

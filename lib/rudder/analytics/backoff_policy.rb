@@ -1,4 +1,4 @@
-require 'Rudder/analytics/defaults'
+require 'rudder/analytics/defaults'
 
 module Rudder
   class Analytics

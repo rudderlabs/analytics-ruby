@@ -1,5 +1,5 @@
 require 'forwardable'
-require 'Rudder/analytics/logging'
+require 'rudder/analytics/logging'
 
 module Rudder
   class Analytics

@@ -1,11 +1,12 @@
 require 'thread'
 require 'time'
+require 'uri'
 
-require 'Rudder/analytics/defaults'
-require 'Rudder/analytics/logging'
-require 'Rudder/analytics/utils'
-require 'Rudder/analytics/worker'
-require 'Rudder/analytics/defaults'
+require 'rudder/analytics/defaults'
+require 'rudder/analytics/logging'
+require 'rudder/analytics/utils'
+require 'rudder/analytics/worker'
+require 'rudder/analytics/defaults'
 require 'net/http'
 
 module Rudder
@@ -31,7 +32,7 @@ module Rudder
         @worker = Worker.new(@queue, @data_plane_url, @write_key, opts)
         @worker_thread = nil
 
-        uri = URI(options[:data_plane_url])
+        uri = URI(opts[:data_plane_url])
 
         @host = uri.host
         @port = uri.port

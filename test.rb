@@ -1,5 +1,6 @@
-require 'Rudder/analytics'
+require 'rudder/analytics'
 require 'pry'
+require 'thread'
 
 printf("SUmanth")
 analytics = Rudder::Analytics.new({
@@ -8,13 +9,14 @@ analytics = Rudder::Analytics.new({
   on_error: Proc.new { |status, msg| print msg }
 })
 
-binding.pry
+#binding.pry
 
 printf("SUmanth")
 
-analytics.identify(
+t = Thread.new {analytics.identify(
   user_id: '019mr8mf4r',
   traits: { email: 'sumanth', friends: 872 },
   context: {ip: '8.8.8.8'}
-)
+)}
+t.join
 printf("SUmanth")
