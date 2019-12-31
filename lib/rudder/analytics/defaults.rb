@@ -2,9 +2,10 @@ module Rudder
   class Analytics
     module Defaults
       module Request
-        HOST = 'api.segment.io'
-        PORT = 443
+        HOST = 'localhost'
+        PORT = 8080
         PATH = '/v1/batch'
+        DATA_PLANE_URL = 'http://localhost:8080/v1/batch'
         SSL = true
         HEADERS = { 'Accept' => 'application/json',
                     'Content-Type' => 'application/json',

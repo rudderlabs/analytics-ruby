@@ -59,7 +59,7 @@ module Rudder
 
           queue = Queue.new
           queue << {}
-          worker = described_class.new queue, 'secret', :on_error => on_error
+          worker = described_class.new queue, 'http://localhost:8080/v1/batch', 'secret', :on_error => on_error
 
           # This is to ensure that Client#flush doesn't finish before calling
           # the error handler.
@@ -84,6 +84,7 @@ module Rudder
           queue = Queue.new
           queue << Requested::TRACK
           worker = described_class.new queue,
+                                       'http://localhost:8080/v1/batch',
                                        'testsecret',
                                        :on_error => on_error
           worker.run
@@ -108,6 +109,7 @@ module Rudder
           queue << bad_message
 
           worker = described_class.new queue,
+                                       'http://localhost:8080/v1/batch',
                                        'testsecret',
                                        :on_error => on_error
           worker.run

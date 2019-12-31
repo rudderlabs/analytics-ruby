@@ -3,7 +3,7 @@ require 'spec_helper'
 module Rudder
   class Analytics
     describe Analytics do
-      let(:analytics) { Rudder::Analytics.new :write_key => WRITE_KEY, :stub => true }
+      let(:analytics) { Rudder::Analytics.new :write_key => WRITE_KEY, :data_plane_url => URI, :stub => true }
 
       describe '#track' do
         it 'errors without an event' do

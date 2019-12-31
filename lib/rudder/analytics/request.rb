@@ -7,6 +7,7 @@ require 'net/http'
 require 'net/https'
 require 'json'
 require 'pry'
+require 'uri'
 
 
 module Rudder
@@ -28,12 +29,14 @@ module Rudder
         @backoff_policy =
           options[:backoff_policy] || Rudder::Analytics::BackoffPolicy.new
 
-        uri = URI(options[:data_plane_url])
+        uri = URI(options[:data_plane_url] || DATA_PLANE_URL)
         printf("************\n")
         printf("************\n")
+        printf(options[:data_plane_url] || DATA_PLANE_URL)
+        printf("\n************\n")
         printf(uri.host)
         printf("\n************\n")
-        printf(uri.port)
+        printf(uri.port.to_s)
         printf("************\n")
 
         http = Net::HTTP.new(uri.host, uri.port)

@@ -64,8 +64,9 @@ module Rudder
           let(:path) { 'my/cool/path' }
           let(:retries) { 1234 }
           let(:backoff_policy) { FakeBackoffPolicy.new([1, 2, 3]) }
-          let(:host) { 'http://www.example.com' }
+          let(:host) { 'localhost' }
           let(:port) { 8080 }
+          let(:data_plane_url) {'http://localhost:8080/v1/batch'}
           let(:options) do
             {
               path: path,
