@@ -17,6 +17,7 @@ def json_hash(str)
 end
 
 # analytics -method=<method> -segment-write-key=<segmentWriteKey> [options]
+# Run in dev with ruby -ilib bin/analytics -method=<method> -segment-write-key=<segmentWriteKey> [options] 
 
 default_command :send
 

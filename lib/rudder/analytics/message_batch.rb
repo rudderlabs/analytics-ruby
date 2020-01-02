@@ -20,6 +20,7 @@ module Rudder
       def <<(message)
         begin
           message_json = message.to_json
+          # puts message_json
         rescue StandardError => e
           raise JSONGenerationError, "Serialization error: #{e}"
         end

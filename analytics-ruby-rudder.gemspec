@@ -1,7 +1,7 @@
 require File.expand_path('../lib/rudder/analytics/version', __FILE__)
 
 Gem::Specification.new do |spec|
-  spec.name = 'analytics-ruby'
+  spec.name = 'analytics-ruby-rudder'
   spec.version = Rudder::Analytics::VERSION
   spec.files = Dir.glob("{lib,bin}/**/*")
   spec.require_paths = ['lib']
@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary = 'Rudder analytics library'
   spec.description = 'The Rudder ruby analytics library'
   spec.authors = ['Rudder']
-  spec.email = 'sumanth@rudderlabs.com'
+  spec.email = 'sayan@rudderlabs.com'
   spec.homepage = 'https://github.com/rudderlabs/rudderanalytics-ruby'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 2.0'
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency 'oj', '~> 3.6.2'
   end
   if RUBY_VERSION >= '2.1'
-    spec.add_development_dependency 'rubocop', '~> 0.51.0'
+    spec.add_development_dependency 'rubocop', '~> 0.78.0'
   end
   spec.add_development_dependency 'codecov', '~> 0.1.4'
 end

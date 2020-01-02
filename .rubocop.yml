@@ -2,9 +2,9 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   # Rubocop doesn't support 2.0, so we'll use the minimum available
-  TargetRubyVersion: 2.1
+  TargetRubyVersion: 2.3
 
-Layout/IndentHash:
+Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
 
 Metrics/AbcSize:
@@ -40,7 +40,7 @@ Naming/FileName:
     - lib/rudderanalytics-ruby.rb # Gem name, added for easier Gemfile usage
 
 Naming/PredicateName:
-  NameWhitelist:
+  AllowedMethods:
     - is_requesting? # Can't be renamed, backwards compatibility
 
 Style/BlockDelimiters:

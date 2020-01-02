@@ -160,6 +160,7 @@ module Rudder
       #
       # returns Boolean of whether the item was added to the queue.
       def enqueue(action)
+        # puts action
         # add our request id for tracing purposes
         action[:messageId] ||= uid
 

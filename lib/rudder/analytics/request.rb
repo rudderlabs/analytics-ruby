@@ -55,7 +55,9 @@ module Rudder
 
         last_response, exception = retry_with_backoff(@retries) do
           status_code, body = send_request(write_key, batch)
-          error = JSON.parse(body)['error']
+          
+          error = JSON.parse(body)['error'] rescue error = JSON.parse(body.to_json)['error']  # rudder server now return 'OK'
+
           should_retry = should_retry_request?(status_code, body)
           logger.debug("Response status code: #{status_code}")
           logger.debug("Response error: #{error}") if error
@@ -121,10 +123,6 @@ module Rudder
           :sentAt => datetime_in_iso8601(Time.now),
           :batch => batch
         )
-
-        payload = JSON.generate(
-          :sentAt => datetime_in_iso8601(Time.now),
-        )
         request = Net::HTTP::Post.new(@path, @headers)
         request.basic_auth(write_key, nil)
 
@@ -134,6 +132,7 @@ module Rudder
 
           [200, '{}']
         else
+          puts payload
           response = @http.request(request, payload)
           [response.code.to_i, response.body]
         end

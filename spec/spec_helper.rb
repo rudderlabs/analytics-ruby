@@ -10,6 +10,7 @@ require 'active_support/time'
 # Setting timezone for ActiveSupport::TimeWithZone to UTC
 Time.zone = 'UTC'
 
+# stop the tests and analyse trace at the error test
 RSpec.configure do |c|
   c.fail_fast = true
 end
