@@ -18,7 +18,6 @@ jobs:
     - name: Run specs
       run: |
         bundle install
-        gem install pry
         bundle exec rspec
 
     - name: Run rake spec
