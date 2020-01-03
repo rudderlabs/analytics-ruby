@@ -9,7 +9,6 @@ jobs:
         ruby: [2.6.x]
 
     steps:
-
       - uses: actions/checkout@v1
       - name: Setup ruby
         uses: actions/setup-ruby@v1
