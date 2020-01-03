@@ -1,3 +1,7 @@
+name: Test
+
+on: [push]
+
 jobs:
   rubocop:
     name: Rubocop
