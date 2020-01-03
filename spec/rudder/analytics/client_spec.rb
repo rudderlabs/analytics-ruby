@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 module Rudder
@@ -128,7 +130,7 @@ module Rudder
             :user_id => 'user',
             :traits => {
               :time => Time.utc(2013),
-              :time_with_zone =>  Time.zone.parse('2013-01-01'),
+              :time_with_zone => Time.zone.parse('2013-01-01'),
               :date_time => DateTime.new(2013, 1, 1),
               :date => Date.new(2013, 1, 1),
               :nottime => 'x'
@@ -193,7 +195,7 @@ module Rudder
             :group_id => 'group',
             :traits => {
               :time => Time.utc(2013),
-              :time_with_zone =>  Time.zone.parse('2013-01-01'),
+              :time_with_zone => Time.zone.parse('2013-01-01'),
               :date_time => DateTime.new(2013, 1, 1),
               :date => Date.new(2013, 1, 1),
               :nottime => 'x'

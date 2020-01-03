@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rudder/analytics/version'
 require 'rudder/analytics/defaults'
 require 'rudder/analytics/utils'

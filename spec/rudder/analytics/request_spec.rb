@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 module Rudder
@@ -66,7 +68,7 @@ module Rudder
           let(:backoff_policy) { FakeBackoffPolicy.new([1, 2, 3]) }
           let(:host) { 'localhost' }
           let(:port) { 8080 }
-          let(:data_plane_url) {'http://localhost:8080/v1/batch'}
+          let(:data_plane_url) { 'http://localhost:8080/v1/batch' }
           let(:options) do
             {
               path: path,

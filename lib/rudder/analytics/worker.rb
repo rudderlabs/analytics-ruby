@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rudder/analytics/defaults'
 require 'rudder/analytics/message_batch'
 require 'rudder/analytics/request'
@@ -42,7 +44,7 @@ module Rudder
             consume_message_from_queue! until @batch.full? || @queue.empty?
           end
 
-          res = Request.new(data_plane_url: @data_plane_url).post @write_key, @batch
+          res = Request.new(:data_plane_url => @data_plane_url).post @write_key, @batch
           @on_error.call(res.status, res.error) unless res.status == 200
 
           @lock.synchronize { @batch.clear }

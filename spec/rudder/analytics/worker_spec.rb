@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 module Rudder
@@ -10,9 +12,9 @@ module Rudder
       describe '#init' do
         it 'accepts string keys' do
           queue = Queue.new
-          worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1",
-                                                  'secret',
-                                                  'batch_size' => 100
+          worker = Rudder::Analytics::Worker.new queue, 'http://localhost:8080/v1',
+                                                 'secret',
+                                                 'batch_size' => 100
           batch = worker.instance_variable_get(:@batch)
           expect(batch.instance_variable_get(:@max_message_count)).to eq(100)
         end
@@ -36,7 +38,7 @@ module Rudder
 
             queue = Queue.new
             queue << {}
-            worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1", 'secret'
+            worker = Rudder::Analytics::Worker.new queue, 'http://localhost:8080/v1', 'secret'
             worker.run
 
             expect(queue).to be_empty
@@ -120,7 +122,7 @@ module Rudder
       describe '#is_requesting?' do
         it 'does not return true if there isn\'t a current batch' do
           queue = Queue.new
-          worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1", 'testsecret'
+          worker = Rudder::Analytics::Worker.new queue, 'http://localhost:8080/v1', 'testsecret'
 
           expect(worker.is_requesting?).to eq(false)
         end
@@ -135,7 +137,7 @@ module Rudder
 
           queue = Queue.new
           queue << Requested::TRACK
-          worker = Rudder::Analytics::Worker.new queue, "http://localhost:8080/v1", 'testsecret'
+          worker = Rudder::Analytics::Worker.new queue, 'http://localhost:8080/v1', 'testsecret'
 
           worker_thread = Thread.new { worker.run }
           eventually { expect(worker.is_requesting?).to eq(true) }

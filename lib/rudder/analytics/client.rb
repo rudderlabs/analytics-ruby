@@ -1,4 +1,5 @@
-require 'thread'
+# frozen_string_literal: true
+
 require 'time'
 require 'uri'
 
@@ -186,8 +187,10 @@ module Rudder
 
       def ensure_worker_running
         return if worker_running?
+
         @worker_mutex.synchronize do
           return if worker_running?
+
           @worker_thread = Thread.new do
             @worker.run
           end
@@ -195,7 +198,7 @@ module Rudder
       end
 
       def worker_running?
-        @worker_thread && @worker_thread.alive?
+        @worker_thread&.alive?
       end
     end
   end

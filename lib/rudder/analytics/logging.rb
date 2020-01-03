@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 
 module Rudder
@@ -10,19 +12,19 @@ module Rudder
       end
 
       def debug(msg)
-        # @logger.debug("#{@prefix} #{msg}")
+        @logger.debug("#{@prefix} #{msg}")
       end
 
       def info(msg)
-        # @logger.info("#{@prefix} #{msg}")
+        @logger.info("#{@prefix} #{msg}")
       end
 
       def warn(msg)
-        # @logger.warn("#{@prefix} #{msg}")
+        @logger.warn("#{@prefix} #{msg}")
       end
 
       def error(msg)
-        # @logger.error("#{@prefix} #{msg}")
+        @logger.error("#{@prefix} #{msg}")
       end
     end
 

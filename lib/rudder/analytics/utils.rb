@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 module Rudder
@@ -65,9 +67,7 @@ module Rudder
       end
 
       def time_in_iso8601(time, fraction_digits = 3)
-        fraction = if fraction_digits > 0
-                     ('.%06i' % time.usec)[0, fraction_digits + 1]
-                   end
+        fraction = (('.%06i' % time.usec)[0, fraction_digits + 1] if fraction_digits > 0)
 
         "#{time.strftime('%Y-%m-%dT%H:%M:%S')}#{fraction}#{formatted_offset(time, true, 'Z')}"
       end

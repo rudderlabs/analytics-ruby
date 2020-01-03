@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # https://github.com/codecov/codecov-ruby#usage
 require 'simplecov'
 SimpleCov.start
@@ -18,7 +20,7 @@ end
 module Rudder
   class Analytics
     WRITE_KEY = 'testsecret'
-    URI = "http://localhost:8080/v1"
+    URI = 'http://localhost:8080/v1'
 
     TRACK = {
       :event => 'Ruby Library test event',
@@ -26,7 +28,7 @@ module Rudder
         :type => 'Chocolate',
         :is_a_lie => true,
         :layers => 20,
-        :created =>  Time.new
+        :created => Time.new
       }
     }
 
@@ -117,6 +119,7 @@ class FakeBackoffPolicy
 
   def next_interval
     raise 'FakeBackoffPolicy has no values left' if @interval_values.empty?
+
     @interval_values.shift
   end
 end
@@ -135,8 +138,9 @@ module AsyncHelper
       begin
         yield
         return
-      rescue RSpec::Expectations::ExpectationNotMetError => error
-        raise error if Time.now >= time_limit
+      rescue RSpec::Expectations::ExpectationNotMetError => e
+        raise e if Time.now >= time_limit
+
         sleep interval
       end
     end

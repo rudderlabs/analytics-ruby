@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rudder/analytics/defaults'
 require 'rudder/analytics/utils'
 require 'rudder/analytics/response'
@@ -8,7 +10,6 @@ require 'net/https'
 require 'json'
 require 'pry'
 require 'uri'
-
 
 module Rudder
   class Analytics
@@ -55,9 +56,15 @@ module Rudder
 
         last_response, exception = retry_with_backoff(@retries) do
           status_code, body = send_request(write_key, batch)
-          
-          error = JSON.parse(body)['error'] rescue error = JSON.parse(body.to_json)['error']  # rudder server now return 'OK'
+          error = nil
+          # rudder server now return 'OK'
+          begin
+                  error = JSON.parse(body)['error']
+          rescue StandardError
+            error = JSON.parse(body.to_json)
+                end
 
+          # puts error
           should_retry = should_retry_request?(status_code, body)
           logger.debug("Response status code: #{status_code}")
           logger.debug("Response error: #{error}") if error
