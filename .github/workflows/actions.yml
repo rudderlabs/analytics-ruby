@@ -6,13 +6,13 @@ jobs:
 
     strategy:
       matrix:
-        ruby-version: [2.6.x]
+        ruby: [2.x]
 
     steps:
       - uses: actions/checkout@v1
       - name: Setup ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: 2.x
+          ruby-version: '2.x'
       -name: test with rake
         run: rake
