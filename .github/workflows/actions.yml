@@ -23,5 +23,11 @@ jobs:
     - name: Run rake spec
       run: |
         rake spec
+
+    -name: Delete old gem file and build
+      run: |
+        rm test-analytics-ruby-rudder*.gem
+        gem build analytics-ruby-rudder.gemspec
+        gem push *.gem
       
   
