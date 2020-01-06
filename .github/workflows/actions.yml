@@ -26,7 +26,6 @@ jobs:
 
     - name: Delete old gem file and build
       run: |
-        rm test-analytics-ruby-rudder*.gem
         gem build analytics-ruby-rudder.gemspec
         gem push *.gem
       
