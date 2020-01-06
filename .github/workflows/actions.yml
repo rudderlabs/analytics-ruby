@@ -23,12 +23,18 @@ jobs:
       run: |
         rake spec
 
-    - name: Delete old gem file and build
+    - name: Delete old gem file
       run: |
         [ -e *.gem ] && rm *.gem
-        gem build analytics-ruby-rudder.gemspec
+    
+    - name: Publish
+        mkdir -p $HOME/.gem
+        touch $HOME/.gem/credentials
+        chmod 0600 $HOME/.gem/credentials
+        printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+        gem build *.gemspec
         gem push *.gem
       env:
-          RUBYGEMS_API_KEY: 3f6d80468e52eda971da171a6d51d399
+          GEM_HOST_API_KEY: 3f6d80468e52eda971da171a6d51d399
       
   
