@@ -28,6 +28,7 @@ jobs:
         [ -e *.gem ] && rm *.gem
     
     - name: Publish
+      run: |
         mkdir -p $HOME/.gem
         touch $HOME/.gem/credentials
         chmod 0600 $HOME/.gem/credentials
