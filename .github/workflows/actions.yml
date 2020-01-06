@@ -22,10 +22,6 @@ jobs:
     - name: Run rake spec
       run: |
         rake spec
-
-    - name: Delete old gem file
-      run: |
-        [ -e *.gem ] && rm *.gem
     
     - name: Publish
       run: |
