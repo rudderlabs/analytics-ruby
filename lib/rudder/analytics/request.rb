@@ -31,14 +31,14 @@ module Rudder
           options[:backoff_policy] || Rudder::Analytics::BackoffPolicy.new
 
         uri = URI(options[:data_plane_url] || DATA_PLANE_URL)
-        printf("************\n")
-        printf("************\n")
-        printf(options[:data_plane_url] || DATA_PLANE_URL)
-        printf("\n************\n")
-        printf(uri.host)
-        printf("\n************\n")
-        printf(uri.port.to_s)
-        printf("************\n")
+        # printf("************\n")
+        # printf("************\n")
+        # printf(options[:data_plane_url] || DATA_PLANE_URL)
+        # printf("\n************\n")
+        # printf(uri.host)
+        # printf("\n************\n")
+        # printf(uri.port.to_s)
+        # printf("************\n")
 
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = options[:ssl]

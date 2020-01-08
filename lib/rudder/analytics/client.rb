@@ -91,7 +91,7 @@ module Rudder
       # @option attrs [Hash] :traits User traits (optional)
       # @macro common_attrs
       def identify(attrs)
-        printf("\nInside Identifyu \n")
+        # printf("\nInside Identify \n")
         symbolize_keys! attrs
         enqueue(FieldParser.parse_for_identify(attrs))
       end

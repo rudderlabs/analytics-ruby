@@ -1,4 +1,4 @@
-require 'analytics-ruby-rudder'
+require 'rudder-sdk-ruby'
 require 'pry'
 require 'thread'
 
@@ -6,8 +6,9 @@ require 'thread'
 # ruby -Ilib tests/test.rb
 
 analytics = Rudder::Analytics.new({
-  write_key: '1TxsTCJuieAGskMK7fMLbuUuMYA',
-  data_plane_url: 'http://localhost:8080',
+  write_key: '1W3YEpwXQRYYL0veak73cvTKI5r',
+  data_plane_url: 'https://hosted.rudderlabs.com/v1/batch',
+  ssl: true,
   on_error: Proc.new { |status, msg| print msg }
 })
 

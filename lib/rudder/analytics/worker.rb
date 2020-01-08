@@ -28,6 +28,7 @@ module Rudder
         @queue = queue
         @data_plane_url = data_plane_url
         @write_key = write_key
+        @ssl = options[:ssl]
         @on_error = options[:on_error] || proc { |status, error| }
         batch_size = options[:batch_size] || Defaults::MessageBatch::MAX_SIZE
         @batch = MessageBatch.new(batch_size)
@@ -44,7 +45,7 @@ module Rudder
             consume_message_from_queue! until @batch.full? || @queue.empty?
           end
 
-          res = Request.new(:data_plane_url => @data_plane_url).post @write_key, @batch
+          res = Request.new(:data_plane_url => @data_plane_url, :ssl => @ssl).post @write_key, @batch
           @on_error.call(res.status, res.error) unless res.status == 200
 
           @lock.synchronize { @batch.clear }
