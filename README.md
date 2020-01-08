@@ -7,13 +7,13 @@ analytics-ruby-rudder is a ruby client for [Rudder](https://rudderlabs.com/)
 Into Gemfile from rubygems.org:
 
 ```ruby
-gem 'analytics-ruby-rudder'
+gem 'rudder-sdk-ruby'
 ```
 
 Into environment gems from rubygems.org:
 
 ```
-gem install 'analytics-ruby-rudder'
+gem install 'rudder-sdk-ruby'
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ gem install 'analytics-ruby-rudder'
 Create an instance of the Analytics object:
 
 ```ruby
-analytics = Rudder::Analytics.new({write_key: 'WRITE_KEY', data_plane_url: 'DATA_PLANE_URL'})
+analytics = Rudder::Analytics.new({write_key: 'WRITE_KEY', data_plane_url: 'DATA_PLANE_URL', ssl: <true/false depending on url>})
 ```
 
 Identify the user for the people section, see more [here](https://segment.com/docs/libraries/ruby/#identify).
