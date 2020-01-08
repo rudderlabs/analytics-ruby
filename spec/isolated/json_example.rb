@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'message_batch_json' do
   it 'MessageBatch generates proper JSON' do
-    batch = Segment::Analytics::MessageBatch.new(100)
+    batch = Rudder::Analytics::MessageBatch.new(100)
     batch << { 'a' => 'b' }
     batch << { 'c' => 'd' }
 
