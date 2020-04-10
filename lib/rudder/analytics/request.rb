@@ -56,13 +56,13 @@ module Rudder
 
         last_response, exception = retry_with_backoff(@retries) do
           status_code, body = send_request(write_key, batch)
-          error = nil
+          error = body
           # rudder server now return 'OK'
-          begin
-                  error = JSON.parse(body)['error']
-          rescue StandardError
-            error = JSON.parse(body.to_json)
-                end
+          # begin
+          #     error = JSON.parse(body)['error']
+          # rescue StandardError
+          #   error = JSON.parse(body.to_json)
+          #       end
 
           # puts error
           should_retry = should_retry_request?(status_code, body)

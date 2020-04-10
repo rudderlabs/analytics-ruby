@@ -147,9 +147,9 @@ module Rudder
             expect(subject.post(write_key, batch).status).to eq(200)
           end
 
-          it 'has a nil error' do
-            expect(subject.post(write_key, batch).error).to be_nil
-          end
+          # it 'has a nil error' do
+          #   expect(subject.post(write_key, batch).error).to be_nil
+          # end
 
           it 'logs a debug statement' do
             expect(subject.logger).to receive(:debug).with(/stubbed request to/)
@@ -199,18 +199,18 @@ module Rudder
               expect(subject.post(write_key, batch).status).to eq(status_code)
             end
 
-            it 'returns a nil error' do
-              expect(subject.post(write_key, batch).error).to be_nil
-            end
+            # it 'returns a nil error' do
+            #   expect(subject.post(write_key, batch).error).to be_nil
+            # end
           end
 
           context 'request results in errorful response' do
             let(:error) { 'this is an error' }
             let(:response_body) { { error: error }.to_json }
 
-            it 'returns the parsed error' do
-              expect(subject.post(write_key, batch).error).to eq(error)
-            end
+            # it 'returns the parsed error' do
+            #   expect(subject.post(write_key, batch).error).to eq(error)
+            # end
           end
 
           context 'a request returns a failure status code' do
