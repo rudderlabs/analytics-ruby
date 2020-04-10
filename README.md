@@ -27,7 +27,7 @@ analytics = Rudder::Analytics.new({write_key: 'WRITE_KEY', data_plane_url: 'DATA
 Identify the user for the people section, see more [here](https://segment.com/docs/libraries/ruby/#identify).
 
 ```ruby
-require 'rudder/analytics'
+require 'rudder-sdk-ruby'
 
 analytics.identify(user_id: 42,
                    traits: {
