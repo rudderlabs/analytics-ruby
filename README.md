@@ -68,4 +68,4 @@ For detailed information on how to set up and use this SDK, please refer to our 
 You can use the `stub` option to `Rudder::Analytics.new` to cause all requests to be stubbed, making it easier to test with this library.
 
 ## Contact Us
-If you come across any issues while configuring or using RudderStack, please feel free to [contact us](https://rudderstack.com/contact/) or start a conversation on our [Discord](https://discordapp.com/invite/xNEdEGw) channel. We will be happy to help you.
+If you come across any issues while configuring or using RudderStack, please feel free to [contact us](https://rudderstack.com/contact/) or start a conversation on our [Slack](https://resources.rudderstack.com/join-rudderstack-slack) channel. We will be happy to help you.
