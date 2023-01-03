@@ -1,0 +1,31 @@
+name: Code Quality Checks
+on:
+  pull_request:
+    branches: ['master']
+    types: ['opened', 'reopened', 'synchronize']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+        
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+      - name: Install dependencies
+        run: bundle install
+      - name: Run tests
+        run: bundle exec rake
+      # - name: Install rubocop
+      #   run: gem install rubocop
+      # - name: Install rubocop-rspec
+      #   run: gem install rubocop-rspec
+      # - name: Install rubocop-performance
+      #   run: gem install rubocop-performance
+      # - name: Install rubocop-rails
+      #   run: gem install rubocop-rails
+      # - name: Execute linting
+      #   run: bundle exec rubocop

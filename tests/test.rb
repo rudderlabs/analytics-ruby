@@ -6,8 +6,8 @@ require 'thread'
 # ruby -Ilib tests/test.rb
 
 analytics = Rudder::Analytics.new({
-  write_key: 'write_key',
-  data_plane_url: '<DATA_PLANE_URL>/v1/batch',
+  write_key: '1wvsoF3Kx2SczQNlx1dvcqW9ODW',
+  data_plane_url: 'https://rudderstacz.dataplane.rudderstack.com/v1/batch',
   ssl: false,
   on_error: Proc.new { |status, msg| print msg }
 })
@@ -15,11 +15,11 @@ analytics = Rudder::Analytics.new({
 
 t = Thread.new{
  
-  analytics.identify(
-  user_id: '019mr8mf4r',
-  traits: { email: 'sumanth', friends: 872 },
-  context: {ip: '8.8.8.8'}
-)
+#   analytics.identify(
+#   user_id: '019mr8mf4r',
+#   traits: { email: 'sumanth', friends: 872 },
+#   context: {ip: '8.8.8.8'}
+# )
 analytics.track(
   user_id: 'f4ca124298',
   event: 'Article Bookmarked',
