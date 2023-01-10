@@ -162,7 +162,10 @@ module Rudder
         end
 
         def check_user_id!(fields)
-          raise ArgumentError, 'Must supply either user_id or anonymous_id' unless fields[:user_id] || fields[:anonymous_id]
+          return unless blank?(fields[:user_id])
+          return unless blank?(fields[:anonymous_id])
+
+          raise ArgumentError, 'Must supply either user_id or anonymous_id'
         end
 
         def check_timestamp!(timestamp)
@@ -178,7 +181,11 @@ module Rudder
         # obj    - String|Number that must be non-blank
         # name   - Name of the validated value
         def check_presence!(obj, name)
-          raise ArgumentError, "#{name} must be given" if obj.nil? || (obj.is_a?(String) && obj.empty?)
+          raise ArgumentError, "#{name} must be given" if blank?(obj)
+        end
+
+        def blank?(obj)
+          obj.nil? || (obj.is_a?(String) && obj.empty?)
         end
 
         def check_is_hash!(obj, name)

@@ -20,7 +20,8 @@ module Rudder
     # @option options [Boolean] :stub (false) If true, requests don't hit the
     #   server and are stubbed to be successful.
     def initialize(options = {})
-      Request.stub = options[:stub] if options.has_key?(:stub)
+      # Request.stub = options[:stub] if options.has_key?(:stub)
+      Transport.stub = options[:stub] if options.has_key?(:stub)
       @client = Rudder::Analytics::Client.new options
     end
 

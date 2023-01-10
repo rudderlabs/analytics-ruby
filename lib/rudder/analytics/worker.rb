@@ -33,6 +33,7 @@ module Rudder
         batch_size = options[:batch_size] || Defaults::MessageBatch::MAX_SIZE
         @batch = MessageBatch.new(batch_size)
         @lock = Mutex.new
+        @transport = Transport.new(options)
       end
 
       # public: Continuously runs the loop to check for new events
@@ -45,11 +46,14 @@ module Rudder
             consume_message_from_queue! until @batch.full? || @queue.empty?
           end
 
-          res = Request.new(:data_plane_url => @data_plane_url, :ssl => @ssl).post @write_key, @batch
+          # res = Request.new(:data_plane_url => @data_plane_url, :ssl => @ssl).post @write_key, @batch
+          res = @transport.send @data_plane_url, @ssl, @write_key, @batch
           @on_error.call(res.status, res.error) unless res.status == 200
 
           @lock.synchronize { @batch.clear }
         end
+      ensure
+        @transport.shutdown
       end
 
       # public: Check whether we have outstanding requests.

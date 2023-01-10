@@ -26,6 +26,7 @@ module Rudder
         symbolize_keys!(opts)
 
         @queue = Queue.new
+        @test = opts[:test]
         @write_key = opts[:write_key]
         @data_plane_url = opts[:data_plane_url]
         @max_queue_size = opts[:max_queue_size] || Defaults::Queue::MAX_SIZE
@@ -155,6 +156,14 @@ module Rudder
         @queue.length
       end
 
+      def test_queue
+        unless @test
+          raise 'Test queue only available when setting :test to true.'
+        end
+
+        @test_queue ||= TestQueue.new
+      end
+
       private
 
       # private: Enqueues the action.
@@ -165,6 +174,11 @@ module Rudder
         # add our request id for tracing purposes
         action[:messageId] ||= uid
 
+        if @test
+          test_queue << action
+          return true
+        end
+
         if @queue.length < @max_queue_size
           @queue << action
           ensure_worker_running
@@ -172,9 +186,7 @@ module Rudder
           true
         else
           logger.warn(
-            'Queue is full, dropping events. The :max_queue_size ' \
-            'configuration parameter can be increased to prevent this from ' \
-            'happening.'
+            'Queue is full, dropping events. The :max_queue_size configuration parameter can be increased to prevent this from happening.'
           )
           false
         end

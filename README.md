@@ -63,7 +63,7 @@ There are a few calls available, please check the documentation section.
 
 For detailed information on how to set up and use this SDK, please refer to our [documentation](https://docs.rudderstack.com/rudderstack-sdk-integration-guides/rudderstack-ruby-sdk)
 
-## Testing
+### Test Queue
 
 You can use the `stub` option to `Rudder::Analytics.new` to cause all requests to be stubbed, making it easier to test with this library.
 
