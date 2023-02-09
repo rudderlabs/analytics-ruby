@@ -28,7 +28,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Version of the Ruby**
+**Version of the _Ruby_**
 Please mention the version of the Ruby version you are using (e.g., 3.2.1).
 
 **Version of the _Rudder Ruby_ SDK**
