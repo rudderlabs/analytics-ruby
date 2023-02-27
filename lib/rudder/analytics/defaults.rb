@@ -7,11 +7,9 @@ module Rudder
         HOST = 'localhost'
         PORT = 8080
         PATH = '/v1/batch'
-        DATA_PLANE_URL = 'http://localhost:8080/v1/batch'
-        SSL = false
         HEADERS = { 'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
-                    'User-Agent' => "rudderanalytics-ruby/#{Analytics::VERSION}" }
+                    'Content-Encoding' => 'gzip' }
         RETRIES = 10
       end
 

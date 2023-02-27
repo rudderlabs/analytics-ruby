@@ -10,9 +10,7 @@ module Rudder
       # public: Return a new hash with keys converted from strings to symbols
       #
       def symbolize_keys(hash)
-        hash.each_with_object({}) do |(k, v), memo|
-          memo[k.to_sym] = v
-        end
+        hash.transform_keys(&:to_sym)
       end
 
       # public: Convert hash keys from strings to symbols in place
@@ -50,7 +48,7 @@ module Rudder
         arr = SecureRandom.random_bytes(16).unpack('NnnnnN')
         arr[2] = (arr[2] & 0x0fff) | 0x4000
         arr[3] = (arr[3] & 0x3fff) | 0x8000
-        '%08x-%04x-%04x-%04x-%04x%08x' % arr
+        '%08x-%04x-%04x-%04x-%04x%08x' % arr # rubocop:disable Style/FormatStringToken
       end
 
       def datetime_in_iso8601(datetime)
@@ -79,7 +77,11 @@ module Rudder
       end
 
       def seconds_to_utc_offset(seconds, colon = true)
-        (colon ? UTC_OFFSET_WITH_COLON : UTC_OFFSET_WITHOUT_COLON) % [(seconds < 0 ? '-' : '+'), (seconds.abs / 3600), ((seconds.abs % 3600) / 60)]
+        (colon ? UTC_OFFSET_WITH_COLON : UTC_OFFSET_WITHOUT_COLON) % [(seconds.negative? ? '-' : '+'), (seconds.abs / 3600), ((seconds.abs % 3600) / 60)]
+      end
+
+      def check_string(obj, name)
+        raise ArgumentError, "#{name} must be a String" unless obj.is_a? String
       end
 
       UTC_OFFSET_WITH_COLON = '%s%02d:%02d'

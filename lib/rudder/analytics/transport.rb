@@ -10,40 +10,32 @@ require 'net/https'
 require 'json'
 require 'pry'
 require 'uri'
+require 'zlib'
 
 module Rudder
   class Analytics
     class Transport
-      include Segment::Analytics::Defaults::Request
-      include Segment::Analytics::Utils
-      include Segment::Analytics::Logging
+      include Rudder::Analytics::Defaults::Request
+      include Rudder::Analytics::Utils
+      include Rudder::Analytics::Logging
 
-      def initialize(options = {})
-        options[:host] ||= HOST
-        options[:port] ||= PORT
-        options[:ssl] ||= SSL
-        @headers = options[:headers] || HEADERS
-        @path = options[:path] || PATH
-        @retries = options[:retries] || RETRIES
-        @backoff_policy =
-          options[:backoff_policy] || Rudder::Analytics::BackoffPolicy.new
+      attr_reader :stub
 
-        uri = URI(options[:data_plane_url] || DATA_PLANE_URL)
-        # printf("************\n")
-        # printf("************\n")
-        # printf(options[:data_plane_url] || DATA_PLANE_URL)
-        # printf("\n************\n")
-        # printf(uri.host)
-        # printf("\n************\n")
-        # printf(uri.port.to_s)
-        # printf("************\n")
+      def initialize(config)
+        @stub = config.stub || false
+        @path = PATH
+        @retries = config.retries || RETRIES
+        @backoff_policy = config.backoff_policy || Rudder::Analytics::BackoffPolicy.new
+
+        uri = URI(config.data_plane_url)
 
         http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = options[:ssl]
+        http.use_ssl = config.ssl || true
         http.read_timeout = 8
         http.open_timeout = 4
 
         @http = http
+        @gzip = config.gzip.nil? ? true : config.gzip
       end
 
       # Sends a batch of messages to the API
@@ -129,31 +121,32 @@ module Rudder
 
       # Sends a request for the batch, returns [status_code, body]
       def send_request(write_key, batch)
-        payload = JSON.generate(
-          :sentAt => datetime_in_iso8601(Time.now),
-          :batch => batch
-        )
-        request = Net::HTTP::Post.new(@path, @headers)
-        request.basic_auth(write_key, nil)
-
-        if self.class.stub
+        if stub
           logger.debug "stubbed request to #{@path}: " \
             "write key = #{write_key}, batch = #{JSON.generate(batch)}"
 
           [200, '{}']
         else
-          puts payload
+          payload = {
+            :batch => batch
+          }
+
+          headers = HEADERS
+
+          if @gzip
+            gzip = Zlib::GzipWriter.new(StringIO.new)
+            gzip << payload.to_json
+            payload = gzip.close.string
+          else
+            headers.delete('Content-Encoding')
+            payload = JSON.generate(payload)
+          end
+
+          request = Net::HTTP::Post.new(@path, headers)
+          request.basic_auth(write_key, nil)
           @http.start unless @http.started? # Maintain a persistent connection
           response = @http.request(request, payload)
           [response.code.to_i, response.body]
-        end
-      end
-
-      class << self
-        attr_writer :stub
-
-        def stub
-          @stub || ENV['STUB']
         end
       end
     end

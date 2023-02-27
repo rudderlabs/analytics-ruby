@@ -41,7 +41,7 @@ module Rudder
     }
 
     ALIAS = {
-      :previous_id => 1234,
+      :previous_id => '1234',
       :user_id => 'abcd'
     }
 
@@ -53,8 +53,8 @@ module Rudder
       :name => 'main'
     }
 
-    USER_ID = 1234
-    GROUP_ID = 1234
+    USER_ID = '1234'
+    GROUP_ID = '1234'
 
     # Hashes sent to the client, snake_case
     module Queued
@@ -147,4 +147,4 @@ module AsyncHelper
   end
 end
 
-include AsyncHelper
+include AsyncHelper # rubocop:disable Style/MixinUsage

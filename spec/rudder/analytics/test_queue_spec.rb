@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-module Segment
+module Rudder
   class Analytics
     describe TestQueue do
       let(:test_queue) { described_class.new }
@@ -14,15 +16,15 @@ module Segment
       describe '#<<' do
         let(:message) do
           {
-            type: type,
-            foo: 'bar'
+            :type => type,
+            :foo => 'bar'
           }
         end
 
         let(:expected_messages) do
           {
             type.to_sym => [message],
-            all: [message]
+            :all => [message]
           }
         end
 
@@ -140,8 +142,8 @@ module Segment
       describe '#count' do
         let(:message) do
           {
-            type: 'alias',
-            foo: 'bar'
+            :type => 'alias',
+            :foo => 'bar'
           }
         end
 
@@ -164,15 +166,15 @@ module Segment
       describe '#[]' do
         let(:message1) do
           {
-            type: 'alias',
-            foo: 'bar'
+            :type => 'alias',
+            :foo => 'bar'
           }
         end
 
         let(:message2) do
           {
-            type: 'identify',
-            foo: 'baz'
+            :type => 'identify',
+            :foo => 'baz'
           }
         end
 
@@ -196,8 +198,8 @@ module Segment
       describe '#reset!' do
         let(:message) do
           {
-            type: 'alias',
-            foo: 'bar'
+            :type => 'alias',
+            :foo => 'bar'
           }
         end
 

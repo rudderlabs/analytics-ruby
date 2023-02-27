@@ -1,4 +1,6 @@
-module Segment
+# frozen_string_literal: true
+
+module Rudder
   class Analytics
     class TestQueue
       attr_reader :messages

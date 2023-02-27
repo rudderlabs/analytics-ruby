@@ -134,7 +134,7 @@ module Rudder
 
       describe '#test_queue' do
         context 'when not in mode' do
-          let(:analytics) { Segment::Analytics.new :write_key => WRITE_KEY, :stub => true, :test => true }
+          let(:analytics) { Rudder::Analytics.new :write_key => WRITE_KEY, :data_plane_url => 'data_plane_url', :stub => true, :test => true }
 
           it 'returns TestQueue' do
             expect(analytics.test_queue).to be_a(TestQueue)
@@ -148,7 +148,7 @@ module Rudder
         end
 
         context 'when not in test mode' do
-          let(:analytics) { Segment::Analytics.new :write_key => WRITE_KEY, :stub => true, :test => false }
+          let(:analytics) { Rudder::Analytics.new :write_key => WRITE_KEY, :data_plane_url => 'data_plane_url', :stub => true, :test => false }
 
           it 'errors when not in test mode' do
             expect(analytics.instance_variable_get(:@test)).to be_falsey
