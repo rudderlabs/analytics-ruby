@@ -6,7 +6,7 @@ require 'rudder/analytics/utils'
 require 'rudder/analytics/field_parser'
 require 'rudder/analytics/client'
 require 'rudder/analytics/worker'
-require 'rudder/analytics/request'
+require 'rudder/analytics/transport'
 require 'rudder/analytics/response'
 require 'rudder/analytics/logging'
 
@@ -20,7 +20,6 @@ module Rudder
     # @option options [Boolean] :stub (false) If true, requests don't hit the
     #   server and are stubbed to be successful.
     def initialize(options = {})
-      Request.stub = options[:stub] if options.has_key?(:stub)
       @client = Rudder::Analytics::Client.new options
     end
 

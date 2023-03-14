@@ -2,7 +2,7 @@
 
 require 'rudder/analytics/defaults'
 require 'rudder/analytics/message_batch'
-require 'rudder/analytics/request'
+require 'rudder/analytics/transport'
 require 'rudder/analytics/utils'
 
 module Rudder
@@ -23,16 +23,15 @@ module Rudder
       #           batch_size - Fixnum of how many items to send in a batch
       #           on_error   - Proc of what to do on an error
       #
-      def initialize(queue, data_plane_url, write_key, options = {})
-        symbolize_keys! options
+      def initialize(queue, config)
         @queue = queue
-        @data_plane_url = data_plane_url
-        @write_key = write_key
-        @ssl = options[:ssl]
-        @on_error = options[:on_error] || proc { |status, error| }
-        batch_size = options[:batch_size] || Defaults::MessageBatch::MAX_SIZE
-        @batch = MessageBatch.new(batch_size)
+        @data_plane_url = config.data_plane_url
+        @write_key = config.write_key
+        @ssl = config.ssl
+        @on_error = config.on_error
+        @batch = MessageBatch.new(config.batch_size)
         @lock = Mutex.new
+        @transport = Transport.new(config)
       end
 
       # public: Continuously runs the loop to check for new events
@@ -45,11 +44,14 @@ module Rudder
             consume_message_from_queue! until @batch.full? || @queue.empty?
           end
 
-          res = Request.new(:data_plane_url => @data_plane_url, :ssl => @ssl).post @write_key, @batch
+          # res = Request.new(:data_plane_url => @data_plane_url, :ssl => @ssl).post @write_key, @batch
+          res = @transport.send @write_key, @batch
           @on_error.call(res.status, res.error) unless res.status == 200
 
           @lock.synchronize { @batch.clear }
         end
+      ensure
+        @transport.shutdown
       end
 
       # public: Check whether we have outstanding requests.

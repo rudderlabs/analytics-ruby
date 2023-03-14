@@ -154,11 +154,11 @@ module Rudder
 
       describe '#alias' do
         it 'errors without from' do
-          expect { client.alias :user_id => 1234 }.to raise_error(ArgumentError)
+          expect { client.alias :user_id => '1234' }.to raise_error(ArgumentError)
         end
 
         it 'errors without to' do
-          expect { client.alias :previous_id => 1234 }.to raise_error(ArgumentError)
+          expect { client.alias :previous_id => '1234' }.to raise_error(ArgumentError)
         end
 
         it 'does not error with the required options' do
@@ -227,10 +227,10 @@ module Rudder
         end
 
         it 'accepts name' do
-          client.page :name => 'foo', :user_id => 1234
+          client.page :name => 'foo', :user_id => '1234'
 
           message = queue.pop
-          expect(message[:userId]).to eq(1234)
+          expect(message[:userId]).to eq('1234')
           expect(message[:name]).to eq('foo')
         end
       end
@@ -285,20 +285,21 @@ module Rudder
       context 'common' do
         check_property = proc { |msg, k, v| msg[k] && msg[k] == v }
 
-        let(:data) { { :user_id => 1, :group_id => 2, :previous_id => 3, :anonymous_id => 4, :message_id => 5, :event => 'coco barked', :name => 'coco' } }
+        let(:data) { { :user_id => '1', :group_id => '2', :previous_id => '3', :anonymous_id => '4', :message_id => 5, :event => 'coco barked', :name => 'coco' } }
 
         it 'does not convert ids given as fixnums to strings' do
           %i[track screen page identify].each do |s|
             client.send(s, data)
             message = queue.pop(true)
 
-            expect(check_property.call(message, :userId, 1)).to eq(true)
-            expect(check_property.call(message, :anonymousId, 4)).to eq(true)
+            expect(check_property.call(message, :userId, '1')).to eq(true)
+            expect(check_property.call(message, :anonymousId, '4')).to eq(true)
           end
         end
 
         it 'returns false if queue is full' do
-          client.instance_variable_set(:@max_queue_size, 1)
+          config = Configuration.new({ :max_queue_size => 1, :write_key => 'write_key', :data_plane_url => 'data_plane_url' })
+          client.instance_variable_set(:@config, config)
 
           %i[track screen page group identify alias].each do |s|
             expect(client.send(s, data)).to eq(true)
@@ -312,7 +313,7 @@ module Rudder
             client.send(s, data)
             message = queue.pop(true)
 
-            expect(check_property.call(message, :messageId, '5')).to eq(true)
+            expect(check_property.call(message, :messageId, 5)).to eq(true)
           end
         end
 
@@ -321,8 +322,8 @@ module Rudder
             client.group(data)
             message = queue.pop(true)
 
-            expect(check_property.call(message, :userId, 1)).to eq(true)
-            expect(check_property.call(message, :groupId, 2)).to eq(true)
+            expect(check_property.call(message, :userId, '1')).to eq(true)
+            expect(check_property.call(message, :groupId, '2')).to eq(true)
           end
         end
 
@@ -331,17 +332,33 @@ module Rudder
             client.alias(data)
             message = queue.pop(true)
 
-            expect(check_property.call(message, :userId, 1)).to eq(true)
-            expect(check_property.call(message, :previousId, 3)).to eq(true)
+            expect(check_property.call(message, :userId, '1')).to eq(true)
+            expect(check_property.call(message, :previousId, '3')).to eq(true)
           end
         end
 
         it 'sends integrations' do
           %i[track screen page group identify alias].each do |s|
-            client.send s, :integrations => { :All => true, :Salesforce => false }, :user_id => 1, :group_id => 2, :previous_id => 3, :anonymous_id => 4, :event => 'coco barked', :name => 'coco'
+            client.send s, :integrations => { :All => true, :Salesforce => false }, :user_id => '1', :group_id => '2', :previous_id => '3', :anonymous_id => '4', :event => 'coco barked', :name => 'coco'
             message = queue.pop(true)
             expect(message[:integrations][:All]).to eq(true)
             expect(message[:integrations][:Salesforce]).to eq(false)
+          end
+        end
+
+        it 'does not enqueue the action in test mode' do
+          config = Configuration.new({ :test => true, :write_key => 'write_key', :data_plane_url => 'data_plane_url' })
+          client.instance_variable_set(:@config, config)
+          client.test_queue
+          test_queue = client.instance_variable_get(:@test_queue)
+
+          %i[track screen page group identify alias].each do |s|
+            old_test_queue_size = test_queue.count
+            queue_size = queue.length
+            client.send(s, data)
+
+            expect(queue.length).to eq(queue_size) # The "real" queue size should not change in test mode
+            expect(test_queue.count).to_not eq(old_test_queue_size) # The "test" queue size should change in test mode
           end
         end
       end

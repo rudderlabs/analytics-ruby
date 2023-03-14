@@ -1,4 +1,14 @@
-*.gem
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
 Gemfile.lock
-.ruby-version
-coverage/
+*.DS_Store
+local_config.yaml
+.vscode/
+.idea/
+.scannerwork/

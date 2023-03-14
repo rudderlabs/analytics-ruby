@@ -4,7 +4,12 @@ require 'spec_helper'
 
 module Rudder
   class Analytics
-    describe Request do
+    describe Transport do
+      subject {
+        described_class.new(
+          Configuration.new({ :write_key => 'write_key', :data_plane_url => 'data_plane_url' })
+        )
+      }
       before do
         # Try and keep debug statements out of tests
         allow(subject.logger).to receive(:error)
@@ -13,6 +18,7 @@ module Rudder
 
       describe '#initialize' do
         let!(:net_http) { Net::HTTP.new(anything, anything) }
+        let!(:config) { Configuration.new({ :write_key => 'write_key', :data_plane_url => 'data_plane_url' }) }
 
         before do
           allow(Net::HTTP).to receive(:new) { net_http }
@@ -20,17 +26,17 @@ module Rudder
 
         it 'sets an initalized Net::HTTP read_timeout' do
           expect(net_http).to receive(:use_ssl=)
-          described_class.new
+          described_class.new(config)
         end
 
         it 'sets an initalized Net::HTTP read_timeout' do
           expect(net_http).to receive(:read_timeout=)
-          described_class.new
+          described_class.new(config)
         end
 
         it 'sets an initalized Net::HTTP open_timeout' do
           expect(net_http).to receive(:open_timeout=)
-          described_class.new
+          described_class.new(config)
         end
 
         it 'sets the http client' do
@@ -52,34 +58,21 @@ module Rudder
             backoff_policy = subject.instance_variable_get(:@backoff_policy)
             expect(backoff_policy).to be_a(Rudder::Analytics::BackoffPolicy)
           end
-
-          it 'initializes a new Net::HTTP with default host and port' do
-            expect(Net::HTTP).to receive(:new).with(
-              described_class::HOST,
-              described_class::PORT
-            )
-            described_class.new
-          end
         end
 
         context 'options are given' do
-          let(:path) { 'my/cool/path' }
-          let(:retries) { 1234 }
+          let(:path) { '/v1/batch' }
+          let(:retries) { 10 }
           let(:backoff_policy) { FakeBackoffPolicy.new([1, 2, 3]) }
-          let(:host) { 'localhost' }
-          let(:port) { 8080 }
-          let(:data_plane_url) { 'http://localhost:8080/v1/batch' }
-          let(:options) do
-            {
-              path: path,
-              retries: retries,
-              backoff_policy: backoff_policy,
-              host: host,
-              port: port
-            }
-          end
+          let(:config) {
+            Configuration.new({
+              :backoff_policy => backoff_policy,
+              :data_plane_url => 'http://localhost:8080/v1/batch',
+              :write_key => 'write_key'
+            })
+          }
 
-          subject { described_class.new(options) }
+          subject { described_class.new(config) }
 
           it 'sets passed in path' do
             expect(subject.instance_variable_get(:@path)).to eq(path)
@@ -93,15 +86,10 @@ module Rudder
             expect(subject.instance_variable_get(:@backoff_policy))
               .to eq(backoff_policy)
           end
-
-          it 'initializes a new Net::HTTP with passed in host and port' do
-            expect(Net::HTTP).to receive(:new).with(host, port)
-            described_class.new(options)
-          end
         end
       end
 
-      describe '#post' do
+      describe '#send' do
         let(:response) {
           Net::HTTPResponse.new(http_version, status_code, response_body)
         }
@@ -113,6 +101,7 @@ module Rudder
 
         before do
           http = subject.instance_variable_get(:@http)
+          allow(http).to receive(:start)
           allow(http).to receive(:request) { response }
           allow(response).to receive(:body) { response_body }
         end
@@ -122,40 +111,40 @@ module Rudder
           default_headers = {
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'User-Agent' => "rudderanalytics-ruby/#{Analytics::VERSION}"
+            'Content-Encoding' => 'gzip'
           }
           expect(Net::HTTP::Post).to receive(:new).with(
             path, default_headers
           ).and_call_original
 
-          subject.post(write_key, batch)
+          subject.send(write_key, batch)
         end
 
         it 'adds basic auth to the Net::HTTP::Post' do
           expect_any_instance_of(Net::HTTP::Post).to receive(:basic_auth)
             .with(write_key, nil)
 
-          subject.post(write_key, batch)
+          subject.send(write_key, batch)
         end
 
-        context 'with a stub' do
-          before do
-            allow(described_class).to receive(:stub) { true }
-          end
+        # context 'with a stub' do
+        #   before do
+        #     allow(described_class).to receive(:stub) { true }
+        #   end
 
-          it 'returns a 200 response' do
-            expect(subject.post(write_key, batch).status).to eq(200)
-          end
+        #   it 'returns a 200 response' do
+        #     expect(subject.send(write_key, batch).status).to eq(200)
+        #   end
 
-          # it 'has a nil error' do
-          #   expect(subject.post(write_key, batch).error).to be_nil
-          # end
+        #   it 'has a nil error' do
+        #     expect(subject.send(write_key, batch).error).to be_nil
+        #   end
 
-          it 'logs a debug statement' do
-            expect(subject.logger).to receive(:debug).with(/stubbed request to/)
-            subject.post(write_key, batch)
-          end
-        end
+        #   it 'logs a debug statement' do
+        #     expect(subject.logger).to receive(:debug).with(/stubbed request to/)
+        #     subject.send(write_key, batch)
+        #   end
+        # end
 
         context 'a real request' do
           RSpec.shared_examples('retried request') do |status_code, body|
@@ -163,9 +152,16 @@ module Rudder
             let(:body) { body }
             let(:retries) { 4 }
             let(:backoff_policy) { FakeBackoffPolicy.new([1000, 1000, 1000]) }
+            let(:config) {
+              Configuration.new({
+                :backoff_policy => backoff_policy,
+                :data_plane_url => 'http://localhost:8080/v1/batch',
+                :write_key => 'write_key',
+                :retries => retries
+              })
+            }
             subject {
-              described_class.new(retries: retries,
-                                  backoff_policy: backoff_policy)
+              described_class.new(config)
             }
 
             it 'retries the request' do
@@ -174,7 +170,7 @@ module Rudder
                 .exactly(retries - 1).times
                 .with(1)
                 .and_return(nil)
-              subject.post(write_key, batch)
+              subject.send(write_key, batch)
             end
           end
 
@@ -183,34 +179,43 @@ module Rudder
             let(:body) { body }
             let(:retries) { 4 }
             let(:backoff) { 1 }
-            subject { described_class.new(retries: retries, backoff: backoff) }
+            let(:config) {
+              Configuration.new({
+                :data_plane_url => 'http://localhost:8080/v1/batch',
+                :write_key => 'write_key',
+                :retries => retries,
+                :backoff => backoff
+              })
+            }
+            subject { described_class.new(config) }
 
             it 'does not retry the request' do
               expect(subject)
                 .to receive(:sleep)
                 .never
-              subject.post(write_key, batch)
+              subject.send(write_key, batch)
             end
           end
 
           context 'request is successful' do
             let(:status_code) { 201 }
+            let(:error) { {}.to_json }
             it 'returns a response code' do
-              expect(subject.post(write_key, batch).status).to eq(status_code)
+              expect(subject.send(write_key, batch).status).to eq(status_code)
             end
 
-            # it 'returns a nil error' do
-            #   expect(subject.post(write_key, batch).error).to be_nil
-            # end
+            it 'returns a nil error' do
+              expect(subject.send(write_key, batch).error).to eq(error)
+            end
           end
 
           context 'request results in errorful response' do
             let(:error) { 'this is an error' }
             let(:response_body) { { error: error }.to_json }
 
-            # it 'returns the parsed error' do
-            #   expect(subject.post(write_key, batch).error).to eq(error)
-            # end
+            it 'returns the parsed error' do
+              expect(subject.send(write_key, batch).error).to eq(response_body)
+            end
           end
 
           context 'a request returns a failure status code' do
@@ -223,24 +228,6 @@ module Rudder
             it_behaves_like('non-retried request', 404, '{}')
             it_behaves_like('non-retried request', 400, '{}')
           end
-
-          # Rudder server return 'OK', this test case is invalid
-          # context 'request or parsing of response results in an exception' do
-          #   let(:response_body) { 'Malformed JSON ---' }
-
-          #   subject { described_class.new(retries: 0) }
-
-          #   #it 'returns a -1 for status' do
-          #   #  expect(subject.post(write_key, batch).status).to eq(-1)
-          #   end
-
-          #   it 'has a connection error' do
-          #     error = subject.post(write_key, batch).error
-          #     expect(error).to match(/Malformed JSON/)
-          #   end
-
-          #   it_behaves_like('retried request', 200, 'Malformed JSON ---')
-          # end
         end
       end
     end

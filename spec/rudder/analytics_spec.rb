@@ -14,6 +14,8 @@ module Rudder
 
         it 'errors without user_id or anonymous_id' do
           expect { analytics.track :event => 'event' }.to raise_error(ArgumentError)
+          expect { analytics.track :event => 'event', user_id: '' }.to raise_error(ArgumentError)
+          expect { analytics.track :event => 'event', anonymous_id: '' }.to raise_error(ArgumentError)
           expect { analytics.track :event => 'event', user_id: '1234' }.to_not raise_error(ArgumentError)
           expect { analytics.track :event => 'event', anonymous_id: '2345' }.to_not raise_error(ArgumentError)
         end
@@ -126,6 +128,33 @@ module Rudder
         Rudder::Analytics::Client.public_instance_methods(false).each do |public_method|
           it "returns a Method object with '#{public_method}' as argument" do
             expect(analytics.method(public_method).class).to eq(Method)
+          end
+        end
+      end
+
+      describe '#test_queue' do
+        context 'when not in mode' do
+          let(:analytics) { Rudder::Analytics.new :write_key => WRITE_KEY, :data_plane_url => 'data_plane_url', :stub => true, :test => true }
+
+          it 'returns TestQueue' do
+            expect(analytics.test_queue).to be_a(TestQueue)
+          end
+
+          it 'returns event' do
+            analytics.track Queued::TRACK
+            expect(analytics.test_queue[0]).to include(Requested::TRACK)
+            expect(analytics.test_queue.track[0]).to include(Requested::TRACK)
+          end
+        end
+
+        context 'when not in test mode' do
+          let(:analytics) { Rudder::Analytics.new :write_key => WRITE_KEY, :data_plane_url => 'data_plane_url', :stub => true, :test => false }
+
+          it 'errors when not in test mode' do
+            expect(analytics.instance_variable_get(:@test)).to be_falsey
+            expect { analytics.test_queue }.to raise_error(
+              RuntimeError, 'Test queue only available when setting :test to true.'
+            )
           end
         end
       end

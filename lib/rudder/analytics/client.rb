@@ -8,6 +8,8 @@ require 'rudder/analytics/logging'
 require 'rudder/analytics/utils'
 require 'rudder/analytics/worker'
 require 'rudder/analytics/defaults'
+require 'rudder/analytics/configuration'
+require 'rudder/analytics/test_queue'
 require 'net/http'
 
 module Rudder
@@ -23,23 +25,11 @@ module Rudder
       #   remain queued.
       # @option opts [Proc] :on_error Handles error calls from the API.
       def initialize(opts = {})
-        symbolize_keys!(opts)
-
+        @config = Configuration.new(opts)
         @queue = Queue.new
-        @write_key = opts[:write_key]
-        @data_plane_url = opts[:data_plane_url]
-        @max_queue_size = opts[:max_queue_size] || Defaults::Queue::MAX_SIZE
         @worker_mutex = Mutex.new
-        @worker = Worker.new(@queue, @data_plane_url, @write_key, opts)
+        @worker = Worker.new(@queue, @config)
         @worker_thread = nil
-
-        uri = URI(opts[:data_plane_url])
-
-        @host = uri.host
-        @port = uri.port
-
-        check_write_key!
-
         at_exit { @worker_thread && @worker_thread[:should_exit] = true }
       end
 
@@ -155,6 +145,12 @@ module Rudder
         @queue.length
       end
 
+      def test_queue
+        raise 'Test queue only available when setting :test to true.' unless @config.test
+
+        @test_queue ||= TestQueue.new
+      end
+
       private
 
       # private: Enqueues the action.
@@ -165,25 +161,33 @@ module Rudder
         # add our request id for tracing purposes
         action[:messageId] ||= uid
 
-        if @queue.length < @max_queue_size
+        if @config.test
+          test_queue << action
+          return true
+        end
+
+        if @queue.length < @config.max_queue_size
           @queue << action
           ensure_worker_running
 
           true
         else
           logger.warn(
-            'Queue is full, dropping events. The :max_queue_size ' \
-            'configuration parameter can be increased to prevent this from ' \
-            'happening.'
+            'Queue is full, dropping events. The :max_queue_size configuration parameter can be increased to prevent this from happening.'
           )
           false
         end
       end
 
       # private: Checks that the write_key is properly initialized
-      def check_write_key!
-        raise ArgumentError, 'Write key must be initialized' if @write_key.nil?
-      end
+      # def check_write_key!
+      #   raise ArgumentError, 'Write key must be initialized' if @write_key.nil?
+      # end
+
+      # private: Checks that the data_plane_url is properly initialized
+      # def check_data_plane_url!
+      #   raise ArgumentError, 'Data plane url must be initialized' if @data_plane_url.nil?
+      # end
 
       def ensure_worker_running
         return if worker_running?
