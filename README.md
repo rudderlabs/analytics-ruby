@@ -96,7 +96,7 @@ Refer to the [RudderStack Ruby SDK documentation](https://www.rudderstack.com/do
 
 ## Test queue
 
-You can use the `stub` option to `Rudder::Analytics.new` to cause all requests to be stubbed, making it easier to test with this library.
+Enable the `stub` option while initializing the SDK to stub all the requests, making it easier for you to test with this library.
 
 ## License
 
