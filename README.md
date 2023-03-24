@@ -1,71 +1,103 @@
+<p align="center">
+  <a href="https://rudderstack.com/">
+    <img src="https://user-images.githubusercontent.com/59817155/121357083-1c571300-c94f-11eb-8cc7-ce6df13855c9.png">
+  </a>
+</p>
+
+<p align="center"><b>The Customer Data Platform for Developers</b></p>
+
+<p align="center">
+  <b>
+    <a href="https://rudderstack.com">Website</a>
+    ·
+    <a href="https://www.rudderstack.com/docs/sources/event-streams/sdks/rudderstack-ruby-sdk/">Documentation</a>
+    ·
+    <a href="https://rudderstack.com/join-rudderstack-slack-community">Community Slack</a>
+  </b>
+</p>
+
+<p align="center"><a href="https://rubygems.org/gems/rudder-sdk-ruby"><img src="https://img.shields.io/gem/v/rudder-sdk-ruby?style=flat"/></a></p>
+
+----
+
 # RudderStack Ruby SDK
 
-## What is RudderStack?
+The RudderStack Ruby SDK lets you send customer event data from your Ruby applications to your specified destinations.
 
-**Short answer:** 
-RudderStack is an open-source Segment alternative written in Go, built for the enterprise.
+## SDK setup requirements
 
-**Long answer:** 
-RudderStack is a platform for collecting, storing and routing customer event data to dozens of tools. It is open-source, can run in your cloud environment (AWS, GCP, Azure or even your data-centre) and provides a powerful transformation framework to process your event data on the fly.
-
-This repository contains the assets for `analytics-ruby-rudder`, a Ruby client for [RudderStack](https://rudderstack.com/)
+- Set up a [RudderStack open source](https://app.rudderstack.com/signup?type=opensource) account.
+- Set up a Ruby source in the dashboard.
+- Copy the write key and the data plane URL. For more information, refer to the [Ruby SDK documentation](https://www.rudderstack.com/docs/sources/event-streams/sdks/rudderstack-ruby-sdk/#sdk-setup-requirements).
 
 ## Installation
 
-Into Gemfile from rubygems.org:
+To install the RudderStack Ruby SDK, add this line to your application's Gem file:
 
 ```ruby
 gem 'rudder-sdk-ruby'
 ```
 
-Into environment gems from rubygems.org:
+You can also install the SDK into your environment gems by running the following command:
 
-```
+```ruby
 gem install 'rudder-sdk-ruby'
 ```
 
-## Usage
+## Using the SDK
 
-Create an instance of the Analytics object:
-
-```ruby
-analytics = Rudder::Analytics.new({write_key: 'WRITE_KEY', data_plane_url: 'DATA_PLANE_URL', ssl: <true/false depending on url>})
-```
-
-Identify the user for the people section, see more [here](https://segment.com/docs/libraries/ruby/#identify).
+To use the Ruby SDK, create a client instance as shown:
 
 ```ruby
 require 'rudder-sdk-ruby'
 
-analytics.identify(user_id: 42,
-                   traits: {
-                     email: 'name@example.com',
-                     first_name: 'Foo',
-                     last_name: 'Bar'
-                   })
+analytics = Rudder::Analytics.new(
+  :write_key => 'WRITE_KEY',
+  :data_plane_url => 'DATA_PLANE_URL',
+  :gzip => true
+)
 ```
 
-Alias an user, see more [here](https://segment.com/docs/libraries/ruby/#alias).
+| Make sure to replace `WRITE_KEY` and `DATA_PLANE_URL` in the above snippet with the actual values from your RudderStack dashboard. |
+| :--- |
+
+You can then use this client to send the events. A sample `track` call sent using the client is shown below:
 
 ```ruby
-analytics.alias(user_id: 41)
+analytics.track(
+  :user_id => '1hKOmRA4GRlm',
+  :event => 'Item Sold',
+  :properties => { :revenue => 9.95, :shipping => 'Free' }
+)
 ```
 
-Track a user event, see more [here](https://segment.com/docs/libraries/ruby/#track).
+## Gzipping requests
+
+The Gzip feature is enabled by default in the Ruby SDK. However, you can disable this feature by setting the `gzip` parameter to false while initializing the SDK:
+
 
 ```ruby
-analytics.track(user_id: 42, event: 'Created Account')
+analytics = Rudder::Analytics.new(
+  :write_key => 'WRITE_KEY', # required
+  :data_plane_url => 'DATA_PLANE_URL',
+  :gzip => false, // Set to true to enable Gzip compression
+  :on_error => proc { |error_code, error_body, exception, response|
+    # defaults to an empty proc
+  }
+)
 ```
 
-There are a few calls available, please check the documentation section.
+| Note: Gzip requires `rudder-server` version 1.4 or later. Otherwise, your events might fail. |
+| :-----|
 
-## Documentation
+## Sending events
 
-For detailed information on how to set up and use this SDK, please refer to our [documentation](https://docs.rudderstack.com/rudderstack-sdk-integration-guides/rudderstack-ruby-sdk)
+Refer to the [RudderStack Ruby SDK documentation](https://www.rudderstack.com/docs/sources/event-streams/sdks/rudderstack-ruby-sdk/) for more information on the supported event types.
 
-### Test Queue
+## Test queue
 
-You can use the `stub` option to `Rudder::Analytics.new` to cause all requests to be stubbed, making it easier to test with this library.
+Enable the `stub` option while initializing the SDK to stub all the requests, making it easier for you to test with this library.
 
-## Contact Us
-If you come across any issues while configuring or using RudderStack, please feel free to [contact us](https://rudderstack.com/contact/) or start a conversation on our [Slack](https://resources.rudderstack.com/join-rudderstack-slack) channel. We will be happy to help you.
+## License
+
+The RudderStack Ruby SDK is released under the [MIT license](https://github.com/rudderlabs/rudder-sdk-ruby/blob/readme-update/LICENSE).
