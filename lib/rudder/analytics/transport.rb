@@ -8,7 +8,6 @@ require 'rudder/analytics/backoff_policy'
 require 'net/http'
 require 'net/https'
 require 'json'
-require 'pry'
 require 'uri'
 require 'zlib'
 
