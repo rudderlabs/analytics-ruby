@@ -97,7 +97,7 @@ module Rudder
         let(:status_code) { 200 }
         let(:response_body) { {}.to_json }
         let(:write_key) { 'abcdefg' }
-        let(:batch) { [] }
+        let(:batch) { MessageBatch.new({}) }
 
         before do
           http = subject.instance_variable_get(:@http)
