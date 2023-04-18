@@ -52,7 +52,7 @@ context = {
   },
   :os => {
     :name => 'macOS',
-    :version => '2.0.1'
+    :version => '2.0.2'
   },
   :locale => 'en-US'
 }
@@ -65,7 +65,7 @@ context = {
 #   },
 #   :os => {
 #     :name => 'macOS',
-#     :version => '2.0.1'
+#     :version => '2.0.2'
 #   },
 #   :locale => 'en-US',
 #   :library => {
@@ -74,53 +74,52 @@ context = {
 #   }
 # }
 
-t = Thread.new do
-  analytics.track(
-    :user_id => user_id,
-    :event => 'Test Track',
-    :anonymous_id => anonymous_id,
-    :properties => properties,
-    :context => context
-  )
+# t = Thread.new do
+analytics.track(
+  :user_id => user_id,
+  :event => 'Test Track',
+  :anonymous_id => anonymous_id,
+  :properties => properties,
+  :context => context
+)
 
-  analytics.screen(
-    :user_id => user_id,
-    :name => 'Test Screen',
-    :anonymous_id => anonymous_id,
-    :properties => properties,
-    :context => context
-  )
+analytics.screen(
+  :user_id => user_id,
+  :name => 'Test Screen',
+  :anonymous_id => anonymous_id,
+  :properties => properties,
+  :context => context
+)
 
-  analytics.identify(
-    :user_id => '654321',
-    :traits => traits,
-    :context => context
-  )
+analytics.identify(
+  :user_id => '654321',
+  :traits => traits,
+  :context => context
+)
 
-  analytics.group(
-    :user_id => user_id,
-    :group_id => uid,
-    :anonymous_id => anonymous_id,
-    :traits => traits,
-    :context => context
-  )
+analytics.group(
+  :user_id => user_id,
+  :group_id => uid,
+  :anonymous_id => anonymous_id,
+  :traits => traits,
+  :context => context
+)
 
-  analytics.alias(
-    :user_id => user_id,
-    :previous_id => '654321',
-    :context => context
-  )
+analytics.alias(
+  :user_id => user_id,
+  :previous_id => '654321',
+  :context => context
+)
 
-  analytics.page(
-    :user_id => user_id,
-    :name => 'Test Page',
-    :anonymous_id => anonymous_id,
-    :properties => properties,
-    :context => context
-  )
-  sleep 10000
-end
+analytics.page(
+  :user_id => user_id,
+  :name => 'Test Page',
+  :anonymous_id => anonymous_id,
+  :properties => properties,
+  :context => context
+)
+# sleep 10000
+# end
+# t.join
 
-t.join
-
-# analytics.flush
+analytics.flush

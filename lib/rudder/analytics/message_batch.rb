@@ -13,6 +13,8 @@ module Rudder
       include Rudder::Analytics::Logging
       include Rudder::Analytics::Defaults::MessageBatch
 
+      attr_reader :messages
+
       def initialize(max_message_count)
         @messages = []
         @max_message_count = max_message_count

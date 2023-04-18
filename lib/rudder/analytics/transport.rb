@@ -120,15 +120,15 @@ module Rudder
 
       # Sends a request for the batch, returns [status_code, body]
       def send_request(write_key, batch)
+        payload = {
+          :batch => batch.messages
+        }
         if stub
           logger.debug "stubbed request to #{@path}: " \
-            "write key = #{write_key}, batch = #{JSON.generate(batch)}"
+            "write key = #{write_key}, batch = #{JSON.generate(payload)}"
 
           [200, '{}']
         else
-          payload = {
-            :batch => batch
-          }
 
           headers = HEADERS
 
