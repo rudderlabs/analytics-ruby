@@ -138,6 +138,14 @@ module Rudder
           delete_library_from_context! context
           add_context! context
 
+          # add traits to context if present
+          if fields[:traits]
+              traits = fields[:traits]
+              check_is_hash!(traits, 'traits')
+              isoify_dates! traits
+              context = context.merge({ :traits => traits })
+          end
+
           parsed = {
             :context => context,
             :integrations => fields[:integrations] || { :All => true },
@@ -164,13 +172,7 @@ module Rudder
             isoify_dates! properties
             parsed = parsed.merge({ :properties => properties })
           end
-          # add the traits if present
-          if fields[:traits]
-            traits = fields[:traits]
-            check_is_hash!(traits, 'traits')
-            isoify_dates! traits
-            parsed = parsed.merge({ :traits => traits })
-          end
+
           parsed
         end
 
