@@ -18,7 +18,13 @@ module Rudder
 
       describe '#initialize' do
         let!(:net_http) { Net::HTTP.new(anything, anything) }
-        let!(:config) { Configuration.new({ :write_key => 'write_key', :data_plane_url => 'data_plane_url' }) }
+        let!(:config) do
+          Configuration.new({
+            :write_key => 'write_key',
+            :data_plane_url => 'data_plane_url',
+            :ssl => false
+          })
+        end
 
         before do
           allow(Net::HTTP).to receive(:new) { net_http }
@@ -64,13 +70,15 @@ module Rudder
           let(:path) { '/v1/batch' }
           let(:retries) { 10 }
           let(:backoff_policy) { FakeBackoffPolicy.new([1, 2, 3]) }
-          let(:config) {
+          let(:config) do
             Configuration.new({
               :backoff_policy => backoff_policy,
               :data_plane_url => 'http://localhost:8080/v1/batch',
-              :write_key => 'write_key'
+              :write_key => 'write_key',
+              :ssl => false,
+              :gzip => false
             })
-          }
+            end
 
           subject { described_class.new(config) }
 
@@ -80,6 +88,15 @@ module Rudder
 
           it 'sets passed in retries' do
             expect(subject.instance_variable_get(:@retries)).to eq(retries)
+          end
+
+          it 'sets false in ssl' do
+            expect(net_http).to receive(:use_ssl=).with(false)
+            described_class.new(config)
+          end
+
+          it 'sets false in gzip' do
+            expect(subject.instance_variable_get(:@gzip)).to eq(false)
           end
 
           it 'sets passed in backoff backoff policy' do
