@@ -169,6 +169,37 @@ module Rudder
             traits = fields[:traits]
             check_is_hash!(traits, 'traits')
             isoify_dates! traits
+
+            # Define special fields and create normalized versions for comparison
+            # Source: https://www.rudderstack.com/docs/event-spec/standard-events/identify/#identify-traits
+            special_fields = [
+              'id',
+              'firstName',
+              'lastName',
+              'name',
+              'age',
+              'email',
+              'phone',
+              'address',
+              'birthday',
+              'company',
+              'createdAt',
+              'description',
+              'gender',
+              'title',
+              'username',
+              'website',
+              'avatar'
+            ]
+            
+            normalized_special_fields = special_fields.map { |field| field.to_s.downcase.gsub(' ', '') }
+            
+            # Process special fields
+            special_fields.each_with_index do |field, index|
+              matching_key = traits.keys.find { |k| k.to_s.downcase.gsub(' ', '') == normalized_special_fields[index] }
+              traits[field] = traits.delete(matching_key) if matching_key
+            end
+            
             parsed = parsed.merge({ :traits => traits })
           end
           parsed
