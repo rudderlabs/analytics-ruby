@@ -29,7 +29,7 @@ module Rudder
         uri = URI(config.data_plane_url)
 
         http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = config.ssl || true
+        http.use_ssl = config.ssl.nil? ? true : config.ssl
         http.read_timeout = 8
         http.open_timeout = 4
 

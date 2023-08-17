@@ -12,3 +12,5 @@ local_config.yaml
 .vscode/
 .idea/
 .scannerwork/
+*.gem
+example/*.rb
