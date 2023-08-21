@@ -18,13 +18,19 @@ ENV['DATA_PLANE_URL'] = local_config['DATA_PLANE_URL']
 ENV['LOCAL_DATA_PLANE_URL'] = local_config['LOCAL_DATA_PLANE_URL']
 
 analytics = Rudder::Analytics.new(
-  :write_key => ENV['WRITE_KEY'],
-  :data_plane_url => ENV['DATA_PLANE_URL'],
-  :gzip => true,
-  :on_error => proc { |error_code, error_body, exception, response|
-    # defaults to an empty proc
-  }
+  write_key: ENV['WRITE_KEY'],
+  data_plane_url: ENV['DATA_PLANE_URL'],
+  gzip: true
 )
+
+# analytics = Rudder::Analytics.new(
+#   :write_key => ENV['WRITE_KEY'],
+#   :data_plane_url => ENV['DATA_PLANE_URL'],
+#   :gzip => true,
+#   :on_error => proc { |error_code, error_body, exception, response|
+#     # defaults to an empty proc
+#   }
+# )
 
 properties = {
   :library => {
@@ -76,11 +82,20 @@ context = {
 
 # t = Thread.new do
 analytics.track(
-  :user_id => user_id,
-  :event => 'Test Track',
-  :anonymous_id => anonymous_id,
-  :properties => properties,
-  :context => context
+  :event => 'Classroom Deletion',
+  :anonymous_id => 'admin',
+  :properties => {
+    :id => 18,
+    :name => 'Math Class 2',
+    :created_at => '2023-04-18T09:43:05.227-04:00',
+    :updated_at => '2023-04-18T09:43:05.227-04:00',
+    :grade_level => 4,
+    :provider => 'UserProvided',
+    :provider_uid => nil,
+    :provider_info => {},
+    :school_id => 1,
+    :disable_sync => {}
+  }
 )
 
 analytics.screen(
@@ -92,9 +107,13 @@ analytics.screen(
 )
 
 analytics.identify(
-  :user_id => '654321',
-  :traits => traits,
-  :context => context
+  user_id: '1hKOmRA4GRlm',
+  traits: {
+    email: "alex@example.com",
+    createdAt: "2023-07-24T00:00:00Z",
+    subscribe: true
+  },
+  context: { ip: '10.81.20.10' }
 )
 
 analytics.group(
