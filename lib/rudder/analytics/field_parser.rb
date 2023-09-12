@@ -169,7 +169,8 @@ module Rudder
             traits = fields[:traits]
             check_is_hash!(traits, 'traits')
             isoify_dates! traits
-            parsed = parsed.merge({ :traits => traits })
+            # remove top level traits
+            # parsed = parsed.merge({ :traits => traits })
           end
           parsed
         end
