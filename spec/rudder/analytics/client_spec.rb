@@ -138,7 +138,8 @@ module Rudder
           })
 
           message = queue.pop
-          traits = message[:traits]
+          context = message[:context]
+          traits = context[:traits]
 
           date_time = DateTime.new(2013, 1, 1)
           expect(Time.iso8601(traits[:time])).to eq(date_time)
@@ -203,7 +204,8 @@ module Rudder
           })
 
           message = queue.pop
-          traits = message[:traits]
+          context = message[:context]
+          traits = context[:traits]
 
           date_time = DateTime.new(2013, 1, 1)
           expect(Time.iso8601(traits[:time])).to eq(date_time)
