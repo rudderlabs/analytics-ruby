@@ -33,7 +33,7 @@ module Rudder
         def logger
           return @logger if @logger
 
-          base_logger = if defined?(Rails)
+          base_logger = if defined?(Rails) && Rails.logger
                           Rails.logger
                         else
                           logger = Logger.new STDOUT
