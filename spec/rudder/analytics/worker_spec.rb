@@ -79,6 +79,38 @@ module Rudder
           expect(error).to eq('Some error')
         end
 
+        it 'executes the on_error_with_messages error handler if the request is invalid' do
+          Rudder::Analytics::Transport
+            .any_instance
+            .stub(:send)
+            .and_return(Rudder::Analytics::Response.new(400, 'Some error'))
+
+          status = error = data = nil
+          on_error_with_messages = proc do |yielded_status, yielded_error, yielded_data|
+            sleep 0.2 # Make this take longer than thread spin-up (below)
+            status, error, data = yielded_status, yielded_error, yielded_data.dup
+          end
+
+          message = { context: {:ip=>"127.0.0.1"}, type: "identify", traits: { email: "test@test.com" } }
+          queue = Queue.new
+          queue << message
+          config = Configuration.new({ :on_error_with_messages => on_error_with_messages, :write_key => 'write_key', :data_plane_url => 'data_plane_url' })
+          worker = described_class.new(queue, config)
+
+          # This is to ensure that Client#flush doesn't finish before calling
+          # the error handler.
+          Thread.new { worker.run }
+          sleep 0.1 # First give thread time to spin-up.
+          sleep 0.01 while worker.is_requesting?
+
+          Rudder::Analytics::Transport.any_instance.unstub(:send)
+
+          expect(queue).to be_empty
+          expect(status).to eq(400)
+          expect(error).to eq('Some error')
+          expect(data).to eq([message])
+        end
+
         # it 'does not call on_error if the request is good' do
         #   on_error = proc do |status, error|
         #     puts "#{status}, #{error}"
