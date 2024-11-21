@@ -24,6 +24,7 @@ module Rudder
       # @option opts [FixNum] :max_queue_size Maximum number of calls to be
       #   remain queued.
       # @option opts [Proc] :on_error Handles error calls from the API.
+      # @option opts [Proc] :on_error_with_messages Handles error calls from the API, with failed messages.
       def initialize(opts = {})
         @config = Configuration.new(opts)
         @queue = Queue.new
