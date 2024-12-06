@@ -26,7 +26,7 @@ module Rudder
           message_json = message.to_json
           # puts message_json
         rescue StandardError => e
-          raise JSONGenerationError, "Serialization error: #{e}"
+          raise JSONGenerationError, "Serialization error: #{e} for message: #{message.inspect}"
         end
 
         message_json_size = message_json.bytesize

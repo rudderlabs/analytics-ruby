@@ -29,6 +29,7 @@ module Rudder
         @write_key = config.write_key
         @ssl = config.ssl
         @on_error = config.on_error
+        @on_error_with_messages = config.on_error_with_messages
         @batch = MessageBatch.new(config.batch_size)
         @lock = Mutex.new
         @transport = Transport.new(config)
@@ -46,7 +47,10 @@ module Rudder
 
           # res = Request.new(:data_plane_url => @data_plane_url, :ssl => @ssl).post @write_key, @batch
           res = @transport.send @write_key, @batch
-          @on_error.call(res.status, res.error) unless res.status == 200
+          unless res.status == 200
+            @on_error.call(res.status, res.error) 
+            @on_error_with_messages.call(res.status, res.error, @batch.messages)
+          end
 
           @lock.synchronize { @batch.clear }
         end
@@ -66,6 +70,7 @@ module Rudder
         @batch << @queue.pop
       rescue MessageBatch::JSONGenerationError => e
         @on_error.call(-1, e.to_s)
+        @on_error_with_messages.call(-1, e.to_s, [])
       end
     end
   end
