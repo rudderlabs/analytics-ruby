@@ -73,6 +73,16 @@ module Rudder
           check_presence!(group_id, 'group_id')
           check_string(group_id, 'group_id')
 
+          # add the traits if present
+          if fields[:traits]
+            traits = fields[:traits]
+            context = common[:context].merge({ :traits => traits })
+
+            common = common.merge({
+              :context => context
+            })
+          end
+
           common.merge({
             :type => 'group',
             :groupId => group_id
