@@ -73,10 +73,17 @@ module Rudder
           check_presence!(group_id, 'group_id')
           check_string(group_id, 'group_id')
 
-          common.merge({
-            :type => 'group',
-            :groupId => group_id
-          })
+          group_data = {
+            type: 'group',
+            groupId: group_id
+          }
+
+          # Add traits if present
+          if fields[:traits]
+            group_data[:traits] = fields[:traits]
+          end          
+
+          common.merge(group_data)
         end
 
         # In addition to the common fields, page accepts:
